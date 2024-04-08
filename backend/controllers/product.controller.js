@@ -1,31 +1,24 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import Product from '../models/product.model.js';
-import { ApiError } from '../utils/ApiError.js';
-import { ApiResponse } from '../utils/ApiResponse.js';
 
-// @desc Fetch all products
-// @route GET /api/products
-// @access Public
-const getProducts = asyncHandler(async (req, res, next) => {
+// @desc    Fetch all products
+// @route   GET /api/products
+// @access  Public
+const getProducts = asyncHandler(async (req, res) => {
   const products = await Product.find({});
-  res
-    .status(200)
-    .json(new ApiResponse(200, products, 'Products fetched successfully'));
+  res.json(products);
 });
 
-// @desc Fetch a product
-// @route GET /api/products/:id
-// @access Public
-const getProductById = asyncHandler(async (req, res, next) => {
+// @desc    Fetch single product
+// @route   GET /api/products/:id
+// @access  Public
+const getProductById = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
-
-  if (!product) {
-    return next(new ApiError(404, 'Resource not found'));
+  if (product) {
+    return res.json(product);
   }
-
-  res
-    .status(200)
-    .json(new ApiResponse(200, product, 'Product fetched successfully'));
+  res.status(404);
+  throw new Error('Resource not found');
 });
 
 export { getProducts, getProductById };
